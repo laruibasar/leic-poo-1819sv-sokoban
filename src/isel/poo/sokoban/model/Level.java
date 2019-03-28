@@ -2,6 +2,10 @@ package isel.poo.sokoban.model;
 
 public class Level {
 
+    public Level (int levelNumber, int height, int width) {
+
+    }
+
     public int getHeight() {
         return 0;
     }
@@ -35,6 +39,19 @@ public class Level {
     }
 
     public int moveMan(Dir dir) {
+
+        return 0;
+    }
+
+    public void reset() {
+
+    }
+
+    public void put(int line, int column, char type) {
+
+    }
+
+    public void init(Game game) {
 
     }
 
