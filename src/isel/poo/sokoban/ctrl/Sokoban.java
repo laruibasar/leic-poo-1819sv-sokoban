@@ -64,13 +64,13 @@ public class Sokoban {
         // Starts the viewer for each model cell.
         // Shows the initial state of all cells in the model.
         int height = level.getHeight(), width = level.getWidth();
-        view = new TilePanel(height,width, CellTile.SIDE);               // Create view for cells
+        view = new TilePanel(height,width, CellTile.SIDE);              // Create view for cells
         win.clear();                                                    // Clear area of previous level
         view.center(WIN_HEIGHT,WIN_WIDTH);                              // Center view in area
         level.setObserver(updater);                                     // Set listener of level
         refreshView();
         do
-            play();                                                      // Process keys and make a step
+            play();                                                     // Process keys and make a step
         while ( !escaped && !level.isFinished() );
         if (escaped || level.manIsDead()) return false;
         win.message("You win");
@@ -95,7 +95,8 @@ public class Sokoban {
         @Override
         public void cellUpdated(int l, int c, Cell cell) { view.getTile(l,c).repaint(); }
         @Override
-        public void cellRepalced(int l, int c, Cell cell) { view.setTile(l,c, CellTile.tileOf(cell)); }
+        public void cellReplaced(int l, int c, Cell cell) { view.setTile(l,c,
+                CellTile.tileOf(cell)); }
     }
     private Updater updater = new Updater();
 

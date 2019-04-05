@@ -1,9 +1,22 @@
 package isel.poo.sokoban.model;
 
+import isel.poo.sokoban.ctrl.Sokoban;
+
 public class Level {
 
-    public Level (int levelNumber, int height, int width) {
+    private int levelNumber;
+    private int height;
+    private int width;
+    private int boxes;
+    private int moves;
 
+    private Observer listener;
+
+    public Level (int levelNumber, int height, int width) {
+        this.levelNumber = levelNumber;
+        this.height = height;
+        this.width = width;
+        this.moves = 0;
     }
 
     public int getHeight() {
@@ -34,20 +47,22 @@ public class Level {
         return 0;
     }
 
-    public Cell getCell() {
+    public Cell getCell(int line, int column) {
         return new Cell();
     }
 
-    public int moveMan(Dir dir) {
+    public void moveMan(Dir dir) {
 
-        return 0;
     }
 
     public void reset() {
 
     }
 
+
     public void put(int line, int column, char type) {
+        if (type == 'B')
+            this.boxes++;
 
     }
 
@@ -55,10 +70,16 @@ public class Level {
 
     }
 
+    public void setObserver(Observer listener) {
+        this.listener = listener;
+    }
+
     public interface Observer {
+
         public void cellUpdated(int l, int c, Cell cell);
 
-        public void cellRepalced(int l, int c, Cell cell);
+        public void cellReplaced(int l, int c, Cell cell);
 
     }
+
 }

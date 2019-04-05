@@ -1,4 +1,4 @@
 package isel.poo.sokoban.model;
 
-public class Actor {
+public abstract class Actor {
 }
