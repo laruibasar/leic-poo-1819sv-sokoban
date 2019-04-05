@@ -2,13 +2,11 @@ package isel.poo.sokoban.model;
 
 public class Cell {
 
-    private char type;
+    private Actor main;
 
-    public Cell() {
-        this.type = '.';
+    public Actor getType() {
+        return this.main;
     }
 
-    public char getType() {
-        return this.type;
-    }
+    public void updateCell(Actor a) { }
 }

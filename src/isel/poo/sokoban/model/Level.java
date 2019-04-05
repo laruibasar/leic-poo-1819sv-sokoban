@@ -2,6 +2,8 @@ package isel.poo.sokoban.model;
 
 import isel.poo.sokoban.ctrl.Sokoban;
 
+import java.io.CharConversionException;
+
 public class Level {
 
     private int levelNumber;
@@ -10,12 +12,16 @@ public class Level {
     private int boxes;
     private int moves;
 
+    // the game area, full of cells is a bi-dimensional array
+    private Cell cellboard[][];
+
     private Observer listener;
 
     public Level (int levelNumber, int height, int width) {
         this.levelNumber = levelNumber;
         this.height = height;
         this.width = width;
+        this.cellboard = new Cell[width][height];
         this.moves = 0;
     }
 
@@ -61,9 +67,33 @@ public class Level {
 
 
     public void put(int line, int column, char type) {
-        if (type == 'B')
-            this.boxes++;
+        cellboard[line][column] = createCell(type);
+        printCellBoard(line, column, type);
+    }
 
+    private Cell createCell(char t) {
+        switch (t) {
+            case '@':
+                return new ManCell();
+            case 'B':
+                return new BoxCell();
+            case '.':
+                return new EmptyCell();
+            case ' ':
+                return new FloorCell();
+            case 'X':
+                return new WallCell();
+            case '*':
+                return new ObjectiveCell();
+            case 'H':
+                return new HoleCell();
+            default:
+                return new EmptyCell();
+        }
+    }
+
+    private void printCellBoard(int l, int c, char t) {
+        System.out.println(l + " x " + c + " : " + " (" + t + " ) " + (cellboard[l][c]).getClass());
     }
 
     public void init(Game game) {
