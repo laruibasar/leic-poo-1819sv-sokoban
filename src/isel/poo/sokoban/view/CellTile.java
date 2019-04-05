@@ -11,7 +11,7 @@ public class CellTile extends Tile {
     private int color;
 
     public CellTile(Cell cell) {
-        this.type = cell.getType();
+        this.type = cell.getType().getActor();
     }
 
     public static Tile tileOf(Cell cell) { return new BoxTile(cell); }
