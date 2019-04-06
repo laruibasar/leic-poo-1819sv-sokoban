@@ -1,4 +1,6 @@
-package isel.poo.sokoban.model;
+package isel.poo.sokoban.model.actor;
+
+import isel.poo.sokoban.model.Actor;
 
 public class BoxActor extends Actor {
 

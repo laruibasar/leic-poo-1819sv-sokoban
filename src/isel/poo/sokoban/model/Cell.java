@@ -15,4 +15,8 @@ public class Cell {
     }
 
     public void updateCell(Actor a) { }
+
+    public boolean isSet() {
+        return (main != null) ? true : false;
+    }
 }

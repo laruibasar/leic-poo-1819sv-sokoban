@@ -16,6 +16,6 @@ public class Actor {
     }
 
     public char getActor() {
-        return symbol;
+        return this.symbol;
     }
 }

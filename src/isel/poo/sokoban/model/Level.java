@@ -1,8 +1,7 @@
 package isel.poo.sokoban.model;
 
-import isel.poo.sokoban.ctrl.Sokoban;
-
-import java.io.CharConversionException;
+import isel.poo.sokoban.model.actor.*;
+import isel.poo.sokoban.model.cell.*;
 
 public class Level {
 
@@ -78,6 +77,13 @@ public class Level {
 
     public void moveMan(Dir dir) {
 
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                System.out.print(" " + cellboard[i][j] + " ");
+            }
+            System.out.println(" ;");
+        }
+
     }
 
     /**
@@ -96,12 +102,13 @@ public class Level {
      * @param type
      */
     public void put(int line, int column, char type) {
-        printCellBoard(line, column, type);
-        if (type != '*') {
-            //Actor actor = createActor(type);
-            //cellboard[line][column] = createCell(actor);
-            printCellBoard(line, column, type);
-        }
+        Actor actor = createActor(type);
+        Cell cell = createCell(actor);
+        System.out.println(actor + " " + cell);
+        if (cellboard[line][column] == null)
+            cellboard[line][column] = createCell(actor);
+        else
+            cellboard[line][column].updateCell(actor);
     }
 
     /**
@@ -155,9 +162,9 @@ public class Level {
     }
 
     private void printCellBoard(int l, int c, char t) {
-        //System.out.println(l + " x " + c + " : " + " (" + t + ") " +
-        // (cellboard[l][c]).getClass());
-        System.out.println(l + " x " + c + " : " + " (" + t + ") ");
+        System.out.println(l + " x " + c + " : " + " (" + t + ") " +
+         (cellboard[l][c]).getClass());
+        //System.out.println(l + " x " + c + " : " + " (" + t + ") ");
     }
 
     public void init(Game game) {
