@@ -3,10 +3,12 @@ package isel.poo.sokoban.model.cell;
 import isel.poo.sokoban.model.Actor;
 import isel.poo.sokoban.model.Cell;
 
+import static isel.poo.sokoban.model.Actor.*;
+
 public class ObjectiveCell extends Cell {
 
     /**
-     * Indicates if objective is fullfiled (this means, if this as a box
+     * Indicates if objective is fulfilled (this means, if this as a box)
      */
     private boolean objective;
 
@@ -18,7 +20,7 @@ public class ObjectiveCell extends Cell {
     @Override
     public void updateCell(Actor a) {
         this.secondary = a;
-        if (a.getActor() == 'B')
+        if (a == BOX)
             this.objective = true;
     }
 

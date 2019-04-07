@@ -1,7 +1,8 @@
 package isel.poo.sokoban.model;
 
-import isel.poo.sokoban.model.actor.*;
 import isel.poo.sokoban.model.cell.*;
+
+import static isel.poo.sokoban.model.Actor.*;
 
 public class Level {
 
@@ -22,7 +23,7 @@ public class Level {
      * The game area, full of cells, is a bi-dimensional array
      * of size to be define at each level
      */
-    private Cell cellboard[][];
+    private Cell[][] cellboard;
 
     /**
      * Event listener
@@ -43,7 +44,7 @@ public class Level {
         this.cellboard = new Cell[width][height];
         this.moves = 0;
         this.manInHole = false;
-        this.man = new ManActor();
+        this.man = MAN;
     }
 
     public int getHeight() {
@@ -55,7 +56,7 @@ public class Level {
     }
 
     public boolean isFinished() {
-        return (this.boxes == 0) ? true : false;
+        return this.boxes == 0;
     }
 
     public boolean manIsDead() {
@@ -126,7 +127,7 @@ public class Level {
             manColumn = newColumn;
             moves++;
             paintGame();
-        } else if (next.getType().getActor() == 'B') {
+        } else if (next.getType() == Actor.BOX) {
             int fwdLine = newLine + (newLine - manLine);
             int fwdColumn = newColumn + (newColumn - manColumn);
             Cell fwd = cellboard[fwdLine][fwdColumn];
@@ -161,16 +162,19 @@ public class Level {
         }
 
         // and if something good ended
-        if (current.getType().getActor() == 'H') {
+        if (next.getType() == Actor.HOLE) {
             manInHole = true;
         }
 
     }
 
-    public void paintGame() {
+    private void paintGame() {
+        System.out.println();
+        System.out.println();
+        System.out.println();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                System.out.print(" " + cellboard[i][j].getType().getActor() + " ");
+                System.out.print(cellboard[i][j].getType() + "\t");
             }
             System.out.println(" ;");
         }
@@ -225,38 +229,38 @@ public class Level {
             case '@':
                 return man;
             case 'B':
-                return new BoxActor(type);
+                return BOX;
             case '.':
-                return new EmptyActor(type);
+                return EMPTY;
             case ' ':
-                return new FloorActor(type);
+                return FLOOR;
             case 'X':
-                return new WallActor(type);
+                return WALL;
             case '*':
-                return new ObjectiveActor(type);
+                return OBJECTIVE;
             case 'H':
-                return new HoleActor(type);
+                return HOLE;
             default:
                 return null;
         }
     }
 
     private Cell createCell(Actor a) {
-        switch (a.getActor()) {
-            case '@':
-            case 'B':
-                Cell c = new FloorCell(new FloorActor(' '));
+        switch (a) {
+            case MAN:
+            case BOX:
+                Cell c = new FloorCell(FLOOR);
                 c.updateCell(a);
                 return c;
-            case '.':
+            case EMPTY:
                 return new EmptyCell(a);
-            case ' ':
+            case FLOOR:
                 return new FloorCell(a);
-            case 'X':
+            case WALL:
                 return new WallCell(a);
-            case '*':
+            case OBJECTIVE:
                 return new ObjectiveCell(a);
-            case 'H':
+            case HOLE:
                 return new HoleCell(a);
             default:
                 return null;
