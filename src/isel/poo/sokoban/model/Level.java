@@ -141,10 +141,15 @@ public class Level {
      * @param type
      */
     public void put(int line, int column, char type) {
+        // fix the position of man
         if (type == '@') {
             manLine = line;
             manColumn = column;
         }
+
+        // count the number of boxes in the level
+        if (type == 'B')
+            boxes++;
 
         Actor actor = createActor(type);
         if (cellboard[line][column] == null)
