@@ -156,12 +156,10 @@ public class Level {
                 // lookout: if we put the box in the hole we loose
                 if (fwd.getType() == HOLE && fwd.getActor() == BOX) {
                     boxInHole = true;
-                    System.out.println("Box went to china");
                 }
             }
         } else {
             // let's head back because we can't move
-            System.out.println("Could not play");
             return;
         }
 
@@ -169,10 +167,9 @@ public class Level {
 
         // we really should check for good this happening
 
-        // and if something good ended and we are in a slump
+        // and if something good ended and we go down the rabbit hole
         if (next.getType() == HOLE && next.getActor() == MAN) {
             manInHole = true;
-            System.out.println("Down the rabbit hole");
         }
 
     }
@@ -191,15 +188,38 @@ public class Level {
     private void paintGame() {
         System.out.println();
         System.out.println();
-        System.out.println();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (cellboard[i][j].getActor() != null)
-                    System.out.print(cellboard[i][j].getActor() + "\t");
-                else
-                    System.out.print(cellboard[i][j].getType() + "\t");
+                if (cellboard[i][j].getActor() != null) {
+                    switch (cellboard[i][j].getActor()) {
+                        case MAN:
+                            System.out.print("@ ");
+                            break;
+                        case BOX:
+                            System.out.print("B ");
+                            break;
+                    }
+                } else {
+                    switch (cellboard[i][j].getType()) {
+                        case EMPTY:
+                            System.out.print(". ");
+                            break;
+                        case FLOOR:
+                            System.out.print("  ");
+                            break;
+                        case WALL:
+                            System.out.print("X ");
+                            break;
+                        case OBJECTIVE:
+                            System.out.print("* ");
+                            break;
+                        case HOLE:
+                            System.out.print("H ");
+                            break;
+                    }
+                }
             }
-            System.out.println(" ;");
+            System.out.println();
         }
     }
 
