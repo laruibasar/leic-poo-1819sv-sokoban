@@ -80,38 +80,40 @@ public class Level {
     }
 
     public void moveMan(Dir dir) {
+        int newLine = manLine;
+        int newColumn = manColumn;
+
         switch (dir) {
             case UP:
-                if ((manLine - 1) > 0) {
-                    manLine--;
-                    this.moves++;
-                }
+                if (--newLine < 0)
+                    return;
                 break;
             case DOWN:
-                if ((manLine + 1) < height) {
-                    manLine++;
-                    moves++;
-                }
+                if (++newLine > (height - 1))
+                    return;
                 break;
             case LEFT:
-                if ((manColumn - 1) > 0) {
-                    manColumn--;
-                    moves++;
-                }
+                if (--newColumn < 0)
+                    return;
                 break;
             case RIGHT:
-                if ((manColumn + 1) < width) {
-                    manColumn++;
-                    moves++;
-                }
+                if (++newColumn > (width - 1))
+                    return;
                 break;
             default:
-                break;
+                return;
         }
 
-        cellboard[manLine][manColumn].updateCell(man);
+        if (cellboard[newLine][newColumn].canEnter()) {
+            System.out.println("hurray");
+            cellboard[manLine][manColumn].removeActor();
+            cellboard[newLine][newColumn].updateCell(man);
+            manLine = newLine;
+            manColumn = newColumn;
+            moves++;
+            paintGame();
+        }
 
-        paintGame();
     }
 
     public void paintGame() {
