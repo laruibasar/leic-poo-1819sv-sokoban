@@ -32,15 +32,20 @@ public class Cell {
     }
 
     /**
-     * Method to identified the type of cell in game. If allows for occupation
-     * it changes it's type.
+     * Method to identified the type of cell in game. The type is relative to
+     * the main actor of the cell
      * @return the actor of the cell
      */
     public Actor getType() {
-        if (this.secondary != null)
-            return this.secondary;
-        else
-            return this.main;
+        return this.main;
+    }
+
+    /**
+     * We need a more talkative class, so this method is more subtle than the
+     * getType, here we return the actor using the cell
+     */
+    public Actor getActor() {
+        return this.secondary;
     }
 
     /**
@@ -52,16 +57,14 @@ public class Cell {
     /**
      * This remove the actor placed in the cell
      */
-    public void removeActor() {
-
-    }
+    public void removeActor() { }
 
     /**
      * And this say to anyone who cares if the cell allows changing type.
      * If allows someone to enter the cell
      */
     public boolean canEnter() {
-        return (this.secondary == null) ? true : false;
+        return this.secondary == null;
     }
 
     /**

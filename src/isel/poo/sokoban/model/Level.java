@@ -15,6 +15,7 @@ public class Level {
     private int manColumn;
 
     private boolean manInHole;
+    private boolean boxInHole;
 
     private Actor man;
 
@@ -44,6 +45,7 @@ public class Level {
         this.cellboard = new Cell[width][height];
         this.moves = 0;
         this.manInHole = false;
+        this.boxInHole = false;
         this.man = MAN;
     }
 
@@ -56,11 +58,12 @@ public class Level {
     }
 
     public boolean isFinished() {
-        return this.boxes == 0;
+        return (this.boxes == 0) || manInHole || boxInHole;
     }
 
     public boolean manIsDead() {
-        return this.manInHole;
+        // we also die from stupidity: don't put boxes in holes
+        return this.manInHole || this.boxInHole;
     }
 
     public int getNumber() {
@@ -89,9 +92,8 @@ public class Level {
         int newLine = manLine;
         int newColumn = manColumn;
         Cell current = cellboard[manLine][manColumn];
-        Cell next;
 
-        // we made this moot when we allowed talk between cells
+        // we made this moot when we allowed talk between Cells
         switch (dir) {
             case UP:
                 if (--newLine < 0)
@@ -113,7 +115,7 @@ public class Level {
                 return;
         }
 
-        next = cellboard[newLine][newColumn];
+        Cell next = cellboard[newLine][newColumn];
         if (next.canEnter()) {
             // we place the man
             next.updateCell(man);
@@ -126,15 +128,16 @@ public class Level {
             manLine = newLine;
             manColumn = newColumn;
             moves++;
-            paintGame();
-        } else if (next.getType() == Actor.BOX) {
+
+        } else if (next.getActor() == BOX) {
             int fwdLine = newLine + (newLine - manLine);
             int fwdColumn = newColumn + (newColumn - manColumn);
             Cell fwd = cellboard[fwdLine][fwdColumn];
 
             if (fwd.canEnter()) {
+                System.out.println("We move forward");
                 // we place the box in the forward cell
-                fwd.updateCell(next.getType());
+                fwd.updateCell(next.getActor());
                 //listener.cellUpdated(manLine, manColumn, fwd);
 
                 // we remove the box, and place the man
@@ -149,23 +152,40 @@ public class Level {
                 manLine = newLine;
                 manColumn = newColumn;
                 moves++;
-                paintGame();
+
+                // lookout: if we put the box in the hole we loose
+                if (fwd.getType() == HOLE && fwd.getActor() == BOX) {
+                    boxInHole = true;
+                    System.out.println("Box went to china");
+                }
             }
         } else {
-            // let's head back
+            // let's head back because we can't move
+            System.out.println("Could not play");
             return;
         }
 
+        paintGame();
+
         // we really should check for good this happening
-        if ((next.isBoxInObjective())) {
-            boxes--;
-        }
 
-        // and if something good ended
-        if (next.getType() == Actor.HOLE) {
+        // and if something good ended and we are in a slump
+        if (next.getType() == HOLE && next.getActor() == MAN) {
             manInHole = true;
+            System.out.println("Down the rabbit hole");
         }
 
+    }
+
+    /**
+     * We verified if we have a Objective Cell with a Box
+     */
+    private void updateBoxes(Cell c) {
+        if (c.getType() == OBJECTIVE && c.isBoxInObjective()) {
+            boxes--;
+        } else {
+            boxes++;
+        }
     }
 
     private void paintGame() {
@@ -174,7 +194,10 @@ public class Level {
         System.out.println();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                System.out.print(cellboard[i][j].getType() + "\t");
+                if (cellboard[i][j].getActor() != null)
+                    System.out.print(cellboard[i][j].getActor() + "\t");
+                else
+                    System.out.print(cellboard[i][j].getType() + "\t");
             }
             System.out.println(" ;");
         }
@@ -210,10 +233,14 @@ public class Level {
             boxes++;
 
         Actor actor = createActor(type);
-        if (cellboard[line][column] == null)
+
+        if (cellboard[line][column] == null) {
             cellboard[line][column] = createCell(actor);
-        else
+        } else {
             cellboard[line][column].updateCell(actor);
+            updateBoxes(cellboard[line][column]);
+        }
+
     }
 
     /**
