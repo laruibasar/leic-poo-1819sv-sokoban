@@ -82,7 +82,10 @@ public class Level {
     public void moveMan(Dir dir) {
         int newLine = manLine;
         int newColumn = manColumn;
+        Cell current = cellboard[manLine][manColumn];
+        Cell next;
 
+        // we made this moot when we allowed talk between cells
         switch (dir) {
             case UP:
                 if (--newLine < 0)
@@ -104,14 +107,43 @@ public class Level {
                 return;
         }
 
-        if (cellboard[newLine][newColumn].canEnter()) {
-            System.out.println("hurray");
-            cellboard[manLine][manColumn].removeActor();
-            cellboard[newLine][newColumn].updateCell(man);
+        next = cellboard[newLine][newColumn];
+        if (next.canEnter()) {
+            // we place the man
+            next.updateCell(man);
+            //listener.cellUpdated(manLine, manColumn, next);
+
+            // we remove the man
+            current.removeActor();
+            //listener.cellReplaced(newLine, newColumn, current);
+
             manLine = newLine;
             manColumn = newColumn;
             moves++;
             paintGame();
+        } else if (next.getType().getActor() == 'B') {
+            int fwdLine = newLine + (newLine - manLine);
+            int fwdColumn = newColumn + (newColumn - manColumn);
+            Cell fwd = cellboard[fwdLine][fwdColumn];
+            if (fwd.canEnter()) {
+                // we place the box in the forward cell
+                fwd.updateCell(next.getType());
+                //listener.cellUpdated(manLine, manColumn, fwd);
+
+                // we remove the box, and place the man
+                next.removeActor();
+                next.updateCell(man);
+                //listener.cellReplaced(newLine, newColumn, next);
+
+                // man exit the current cell, we clean the cell
+                current.removeActor();
+                //listener.cellReplaced(newLine, newColumn, current);
+
+                manLine = newLine;
+                manColumn = newColumn;
+                moves++;
+                paintGame();
+            }
         }
 
     }
@@ -126,10 +158,13 @@ public class Level {
     }
 
     /**
-     * Reset the level, meaning the moves are set to zero, cells, etc
+     * Reset the level stats et all, meaning the moves are set to zero,
+     * cells, etc
      */
     public void reset() {
         moves = 0;
+        boxes = 0;
+        cellboard = new Cell[width][height];
     }
 
     /**
