@@ -5,10 +5,8 @@ import isel.poo.sokoban.model.Cell;
 
 public class HoleCell extends Cell {
 
-    private Actor secondary;
-
-    public HoleCell() {
-        super();
+    public HoleCell(Actor a) {
+        super(a);
     }
 
     @Override
@@ -16,6 +14,7 @@ public class HoleCell extends Cell {
         this.secondary = a;
     }
 
+    @Override
     public void removeActor() {
         this.secondary = null;
     }

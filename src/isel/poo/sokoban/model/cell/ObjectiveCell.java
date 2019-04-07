@@ -5,10 +5,8 @@ import isel.poo.sokoban.model.Cell;
 
 public class ObjectiveCell extends Cell {
 
-    private Actor secondary;
-
-    public ObjectiveCell() {
-        super();
+    public ObjectiveCell(Actor a) {
+        super(a);
     }
 
     @Override
@@ -16,7 +14,12 @@ public class ObjectiveCell extends Cell {
         this.secondary = a;
     }
 
+    @Override
     public void removeActor() {
         this.secondary = null;
+    }
+
+    public boolean isCompleted() {
+        return (secondary.getActor() == 'B') ? true : false;
     }
 }

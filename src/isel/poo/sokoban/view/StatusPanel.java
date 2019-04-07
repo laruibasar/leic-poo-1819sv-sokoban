@@ -8,10 +8,6 @@ import isel.poo.console.ParentView;
 
 public class StatusPanel extends ParentView {
 
-    private int boxes;
-    private int moves;
-    private int level;
-
     private FieldView fvLevel;
     private FieldView fvMoves;
     private FieldView fvBoxes;
@@ -22,17 +18,14 @@ public class StatusPanel extends ParentView {
     public StatusPanel(int left) {
         super(0, left, HEIGHT, WIDTH, DARK_GRAY);
 
-        this.level = 0;
-        fvLevel = new FieldView("Level", 1, 1, Integer.toString(this.level));
+        fvLevel = new FieldView("Level", 1, 1, "0");
         addView(fvLevel);
 
-        fvMoves = new FieldView("Moves", 4, 1, Integer.toString(this.moves));
+        fvMoves = new FieldView("Moves", 4, 1, "0");
         addView(fvMoves);
-        this.moves = 0;
 
-        fvBoxes = new FieldView("Boxes", 7, 1, Integer.toString(this.boxes));
+        fvBoxes = new FieldView("Boxes", 7, 1, "0");
         addView(fvBoxes);
-        this.boxes = 0;
 
         writeTitle(10, "Cursor");
         writeContent(11,"move");
@@ -43,17 +36,11 @@ public class StatusPanel extends ParentView {
         cursor(0,0);
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
+    public void setLevel(int level) { fvLevel.setValue(level); }
 
-    public void setBoxes(int boxes) {
-        this.boxes = boxes;
-    }
+    public void setBoxes(int boxes) { fvBoxes.setValue(boxes); }
 
-    public void setMoves(int moves) {
-        this.moves = moves;
-    }
+    public void setMoves(int moves) { fvMoves.setValue(moves); }
 
     private void writeTitle(int top, String s) {
         cursor(top, 0);

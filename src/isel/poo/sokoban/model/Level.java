@@ -10,6 +10,9 @@ public class Level {
     private int width;
     private int boxes;
     private int moves;
+    private int manLine;
+    private int manColumn;
+    private Actor man;
 
     /**
      * The game area, full of cells, is a bi-dimensional array
@@ -23,7 +26,7 @@ public class Level {
     private Observer listener;
 
     /**
-     * Class constructor, setting up the paramenters needed to start the show
+     * Class constructor, setting up the parameters needed to start the show
      *
      * @param levelNumber the level number for the game
      * @param height the number of columns
@@ -35,6 +38,7 @@ public class Level {
         this.width = width;
         this.cellboard = new Cell[width][height];
         this.moves = 0;
+        this.man = new ManActor();
     }
 
     public int getHeight() {
@@ -76,14 +80,47 @@ public class Level {
     }
 
     public void moveMan(Dir dir) {
+        switch (dir) {
+            case UP:
+                if ((manLine - 1) > 0) {
+                    manLine--;
+                    this.moves++;
+                }
+                break;
+            case DOWN:
+                if ((manLine + 1) < height) {
+                    manLine++;
+                    moves++;
+                }
+                break;
+            case LEFT:
+                if ((manColumn - 1) > 0) {
+                    manColumn--;
+                    moves++;
+                }
+                break;
+            case RIGHT:
+                if ((manColumn + 1) < width) {
+                    manColumn++;
+                    moves++;
+                }
+                break;
+            default:
+                break;
+        }
 
+        cellboard[manLine][manColumn].updateCell(man);
+
+        paintGame();
+    }
+
+    public void paintGame() {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                System.out.print(" " + cellboard[i][j] + " ");
+                System.out.print(" " + cellboard[i][j].getType().getActor() + " ");
             }
             System.out.println(" ;");
         }
-
     }
 
     /**
@@ -102,9 +139,12 @@ public class Level {
      * @param type
      */
     public void put(int line, int column, char type) {
+        if (type == '@') {
+            manLine = line;
+            manColumn = column;
+        }
+
         Actor actor = createActor(type);
-        Cell cell = createCell(actor);
-        System.out.println(actor + " " + cell);
         if (cellboard[line][column] == null)
             cellboard[line][column] = createCell(actor);
         else
@@ -113,7 +153,7 @@ public class Level {
 
     /**
      * Set a new instance of Actor depending of type.
-     * We need to think carefull if we have a special Cell that can have more
+     * We need to think careful if we have a special Cell that can have more
      * than one Actor, like HoleCell, ObjectiveCell, FloorCell,
      *
      * @param type symbol for the actor type
@@ -122,7 +162,7 @@ public class Level {
     private Actor createActor(char type) {
         switch (type) {
             case '@':
-                return new ManActor(type);
+                return man;
             case 'B':
                 return new BoxActor(type);
             case '.':
@@ -143,28 +183,23 @@ public class Level {
     private Cell createCell(Actor a) {
         switch (a.getActor()) {
             case '@':
-                return new ManCell();
             case 'B':
-                return new BoxCell();
+                Cell c = new FloorCell(new FloorActor(' '));
+                c.updateCell(a);
+                return c;
             case '.':
-                return new EmptyCell();
+                return new EmptyCell(a);
             case ' ':
-                return new FloorCell();
+                return new FloorCell(a);
             case 'X':
-                return new WallCell();
+                return new WallCell(a);
             case '*':
-                return new ObjectiveCell();
+                return new ObjectiveCell(a);
             case 'H':
-                return new HoleCell();
+                return new HoleCell(a);
             default:
                 return null;
         }
-    }
-
-    private void printCellBoard(int l, int c, char t) {
-        System.out.println(l + " x " + c + " : " + " (" + t + ") " +
-         (cellboard[l][c]).getClass());
-        //System.out.println(l + " x " + c + " : " + " (" + t + ") ");
     }
 
     public void init(Game game) {

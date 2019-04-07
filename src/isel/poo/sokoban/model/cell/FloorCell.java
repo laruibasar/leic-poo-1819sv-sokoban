@@ -4,10 +4,9 @@ import isel.poo.sokoban.model.Actor;
 import isel.poo.sokoban.model.Cell;
 
 public class FloorCell extends Cell {
-    private Actor secondary;
 
-    public FloorCell() {
-        super();
+    public FloorCell(Actor a) {
+        super(a);
     }
 
     @Override
@@ -15,7 +14,9 @@ public class FloorCell extends Cell {
         this.secondary = a;
     }
 
+    @Override
     public void removeActor() {
         this.secondary = null;
     }
+
 }
