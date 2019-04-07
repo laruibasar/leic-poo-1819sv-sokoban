@@ -5,13 +5,21 @@ import isel.poo.sokoban.model.Cell;
 
 public class ObjectiveCell extends Cell {
 
+    /**
+     * Indicates if objective is fullfiled (this means, if this as a box
+     */
+    private boolean objective;
+
     public ObjectiveCell(Actor a) {
         super(a);
+        this.objective = false;
     }
 
     @Override
     public void updateCell(Actor a) {
         this.secondary = a;
+        if (a.getActor() == 'B')
+            this.objective = true;
     }
 
     @Override
@@ -19,7 +27,8 @@ public class ObjectiveCell extends Cell {
         this.secondary = null;
     }
 
-    public boolean isCompleted() {
-        return (secondary.getActor() == 'B') ? true : false;
+    @Override
+    public boolean isBoxInObjective() {
+        return this.objective;
     }
 }

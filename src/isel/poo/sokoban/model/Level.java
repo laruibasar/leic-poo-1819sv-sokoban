@@ -12,7 +12,11 @@ public class Level {
     private int moves;
     private int manLine;
     private int manColumn;
+
+    private boolean manInHole;
+
     private Actor man;
+
 
     /**
      * The game area, full of cells, is a bi-dimensional array
@@ -38,27 +42,28 @@ public class Level {
         this.width = width;
         this.cellboard = new Cell[width][height];
         this.moves = 0;
+        this.manInHole = false;
         this.man = new ManActor();
     }
 
     public int getHeight() {
-        return height;
+        return this.height;
     }
 
     public int getWidth() {
-        return width;
+        return this.width;
     }
 
     public boolean isFinished() {
-        return false;
+        return (this.boxes == 0) ? true : false;
     }
 
     public boolean manIsDead() {
-        return false;
+        return this.manInHole;
     }
 
     public int getNumber() {
-        return levelNumber;
+        return this.levelNumber;
     }
 
     public int getRemainingBoxes() {
@@ -125,6 +130,7 @@ public class Level {
             int fwdLine = newLine + (newLine - manLine);
             int fwdColumn = newColumn + (newColumn - manColumn);
             Cell fwd = cellboard[fwdLine][fwdColumn];
+
             if (fwd.canEnter()) {
                 // we place the box in the forward cell
                 fwd.updateCell(next.getType());
@@ -144,6 +150,19 @@ public class Level {
                 moves++;
                 paintGame();
             }
+        } else {
+            // let's head back
+            return;
+        }
+
+        // we really should check for good this happening
+        if ((next.isBoxInObjective())) {
+            boxes--;
+        }
+
+        // and if something good ended
+        if (current.getType().getActor() == 'H') {
+            manInHole = true;
         }
 
     }

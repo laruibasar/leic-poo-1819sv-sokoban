@@ -63,4 +63,12 @@ public class Cell {
     public boolean canEnter() {
         return (this.secondary == null) ? true : false;
     }
+
+    /**
+     * This answers the question: am i fulfilled?
+     * Only overrides in ObjectiveCell
+     */
+    public boolean isBoxInObjective() {
+        return false;
+    }
 }
