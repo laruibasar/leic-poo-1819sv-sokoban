@@ -6,40 +6,12 @@ import static isel.poo.sokoban.model.Actor.*;
 
 public class Level {
 
-    /**
-     * Save the level we are
-     */
     private int levelNumber;
-
-    /**
-     * Set the height of the game area
-     */
     private int height;
-
-    /**
-     * Set the width of the game area
-     */
     private int width;
 
-    /**
-     * Set the number of boxes outside the objectives
-     */
-    private int boxes;
-
-    /**
-     * Count the number of player's moves
-     */
+    private int remainingBoxes;
     private int moves;
-
-    /**
-     * The line position of the man
-     */
-    private int manLine;
-
-    /**
-     * The column position of the man
-     */
-    private int manColumn;
 
     /**
      * The numObjectives and numBoxes is for check for losing conditions,
@@ -48,20 +20,12 @@ public class Level {
     private int numObjectives;
     private int numBoxes;
 
-    /**
-     * If we as man are in the hole, we loose
-     */
     private boolean manInHole;
-
-    /**
-     * If we insist on place boxes in holes, we loose
-     */
     private boolean boxInHole;
 
-    /**
-     * This is our game man
-     */
     private Actor man;
+    private int manLine;
+    private int manColumn;
 
     /**
      * The game area, full of cells, is a bi-dimensional array
@@ -69,9 +33,6 @@ public class Level {
      */
     private Cell[][] cellboard;
 
-    /**
-     * Event listener
-     */
     private Observer listener;
 
     /**
@@ -87,7 +48,7 @@ public class Level {
         this.width = width;
         this.cellboard = new Cell[height][width];
         this.moves = 0;
-        this.boxes = 0;
+        this.remainingBoxes = 0;
 
         this.numBoxes = 0;
         this.numObjectives = 0;
@@ -106,7 +67,7 @@ public class Level {
     }
 
     public boolean isFinished() {
-        return (this.boxes == 0) || manInHole || boxInHole;
+        return (this.remainingBoxes == 0) || manInHole || boxInHole;
     }
 
     public boolean manIsDead() {
@@ -119,7 +80,7 @@ public class Level {
     }
 
     public int getRemainingBoxes() {
-        return boxes;
+        return remainingBoxes;
     }
 
     public int getMoves() {
@@ -136,6 +97,10 @@ public class Level {
         return cellboard[line][column];
     }
 
+    /**
+     * Method called for the movement of the man in the game area
+     * @param dir the movement direction from the user
+     */
     public void moveMan(Dir dir) {
         int newLine = manLine;
         int newColumn = manColumn;
@@ -159,6 +124,7 @@ public class Level {
                 break;
         }
 
+        // moves the man and save the new position
         if (moveManInCell(newLine, newColumn)) {
             manLine = newLine;
             manColumn = newColumn;
@@ -168,7 +134,7 @@ public class Level {
             return;
         }
 
-        checkForBoxes();
+        updateRemainingBoxes();
         paintGame();
     }
 
@@ -216,8 +182,8 @@ public class Level {
                 current.removeActor();
 
                 // we really should check for good this happening
-                if (fwd.getType() == OBJECTIVE && fwd.getActor() == BOX)
-                    boxes--;
+                //if (fwd.getType() == OBJECTIVE && fwd.getActor() == BOX)
+                //    remainingBoxes--;
             } else {
                 return false;
             }
@@ -236,11 +202,14 @@ public class Level {
 
 
     /**
-     * Do a full sweep to check for boxes in objectives
+     * Do a full sweep to check for boxes in objectives and updates
+     * the remaining boxes in the level
      */
-    private void checkForBoxes() {
+    private void updateRemainingBoxes() {
         Cell c;
         int bc = 0;
+
+        // count all boxes
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 c = cellboard[i][j];
@@ -249,6 +218,8 @@ public class Level {
                     bc++;
             }
         }
+
+        // count all boxes in ObjectiveCells
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 c = cellboard[i][j];
@@ -259,18 +230,7 @@ public class Level {
                 }
             }
         }
-        boxes = bc;
-    }
-
-    /**
-     * We verified if we have a Objective Cell with a Box
-     */
-    private void updateBoxes(Cell c) {
-        if (c.getType() == OBJECTIVE && c.isBoxInObjective()) {
-            boxes--;
-        } else {
-            boxes++;
-        }
+        remainingBoxes = bc;
     }
 
     private void paintGame() {
@@ -317,7 +277,7 @@ public class Level {
      */
     public void reset() {
         moves = 0;
-        boxes = 0;
+        remainingBoxes = 0;
         cellboard = new Cell[height][width];
     }
 
@@ -325,9 +285,9 @@ public class Level {
      * Method to insert into the game area the type of cell depending of the
      * char read from file
      *
-     * @param line
-     * @param column
-     * @param type
+     * @param line the line in the game area
+     * @param column the column in the game area
+     * @param type the type of actor
      */
     public void put(int line, int column, char type) {
         // lock man position
@@ -338,7 +298,7 @@ public class Level {
 
         // count the number of boxes in the level
         if (type == 'B') {
-            boxes++;
+            remainingBoxes++;
             numBoxes++;
         }
 
@@ -358,12 +318,23 @@ public class Level {
     }
 
     /**
+     * We verified if we have a Objective Cell with a Box
+     */
+    private void updateBoxes(Cell c) {
+        if (c.getType() == OBJECTIVE && c.isBoxInObjective()) {
+            remainingBoxes--;
+        } else {
+            remainingBoxes++;
+        }
+    }
+
+    /**
      * Set a new instance of Actor depending of type.
      * We need to think careful if we have a special Cell that can have more
      * than one Actor, like HoleCell, ObjectiveCell, FloorCell,
      *
      * @param type symbol for the actor type
-     * @return instance of a Type of Actor
+     * @return enum of the Type of Actor
      */
     private Actor createActor(char type) {
         switch (type) {
@@ -386,6 +357,11 @@ public class Level {
         }
     }
 
+    /**
+     * Create the cell depending of the type of actor.
+     * @param a the actor to set the cell type
+     * @return the cell type
+     */
     private Cell createCell(Actor a) {
         switch (a) {
             case MAN:
