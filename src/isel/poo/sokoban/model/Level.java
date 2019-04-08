@@ -6,19 +6,62 @@ import static isel.poo.sokoban.model.Actor.*;
 
 public class Level {
 
+    /**
+     * Save the level we are
+     */
     private int levelNumber;
+
+    /**
+     * Set the height of the game area
+     */
     private int height;
+
+    /**
+     * Set the width of the game area
+     */
     private int width;
+
+    /**
+     * Set the number of boxes outside the objectives
+     */
     private int boxes;
+
+    /**
+     * Count the number of player's moves
+     */
     private int moves;
+
+    /**
+     * The line position of the man
+     */
     private int manLine;
+
+    /**
+     * The column position of the man
+     */
     private int manColumn;
 
+    /**
+     * The numObjectives and numBoxes is for check for losing conditions,
+     * when we have less boxes than objectives
+     */
+    private int numObjectives;
+    private int numBoxes;
+
+    /**
+     * If we as man are in the hole, we loose
+     */
     private boolean manInHole;
+
+    /**
+     * If we insist on place boxes in holes, we loose
+     */
     private boolean boxInHole;
 
+    /**
+     * This is our game man
+     */
     private Actor man;
-
 
     /**
      * The game area, full of cells, is a bi-dimensional array
@@ -35,15 +78,20 @@ public class Level {
      * Class constructor, setting up the parameters needed to start the show
      *
      * @param levelNumber the level number for the game
-     * @param height the number of columns
-     * @param width the number of lines
+     * @param height the number of lines
+     * @param width the number of columns
      */
     public Level (int levelNumber, int height, int width) {
         this.levelNumber = levelNumber;
         this.height = height;
         this.width = width;
-        this.cellboard = new Cell[width][height];
+        this.cellboard = new Cell[height][width];
         this.moves = 0;
+        this.boxes = 0;
+
+        this.numBoxes = 0;
+        this.numObjectives = 0;
+
         this.manInHole = false;
         this.boxInHole = false;
         this.man = MAN;
@@ -62,7 +110,7 @@ public class Level {
     }
 
     public boolean manIsDead() {
-        // we also die from stupidity: don't put boxes in holes
+        // we also die from stupidity: don't put to many boxes in holes
         return this.manInHole || this.boxInHole;
     }
 
@@ -93,7 +141,6 @@ public class Level {
         int newColumn = manColumn;
         Cell current = cellboard[manLine][manColumn];
 
-        // we made this moot when we allowed talk between Cells
         switch (dir) {
             case UP:
                 if (--newLine < 0)
@@ -111,67 +158,111 @@ public class Level {
                 if (++newColumn > (width - 1))
                     return;
                 break;
-            default:
-                return;
         }
 
-        Cell next = cellboard[newLine][newColumn];
-        if (next.canEnter()) {
-            // we place the man
-            next.updateCell(man);
-            //listener.cellUpdated(manLine, manColumn, next);
-
-            // we remove the man
-            current.removeActor();
-            //listener.cellReplaced(newLine, newColumn, current);
-
+        if (moveManInCell(newLine, newColumn)) {
             manLine = newLine;
             manColumn = newColumn;
-            moves++;
 
+            moves++;
+        } else {
+            return;
+        }
+
+        checkForBoxes();
+        paintGame();
+    }
+
+    /**
+     * Method to make the man and boxes move in the cells
+     * @param newLine the new line in the board to move to move into
+     * @param newColumn the new column in the board to move into
+     * @return success of the move
+     */
+    public boolean moveManInCell(int newLine, int newColumn) {
+        Cell current = cellboard[manLine][manColumn];
+        Cell next = cellboard[newLine][newColumn];
+
+        if (next.canEnter()) {
+            next.updateCell(man);
+            //listener.cellReplaced(manLine, manColumn, next);
+
+            current.removeActor();
+            //listener.cellReplaced(newLine, newColumn, current);
         } else if (next.getActor() == BOX) {
             int fwdLine = newLine + (newLine - manLine);
             int fwdColumn = newColumn + (newColumn - manColumn);
             Cell fwd = cellboard[fwdLine][fwdColumn];
 
             if (fwd.canEnter()) {
-                System.out.println("We move forward");
-                // we place the box in the forward cell
-                fwd.updateCell(next.getActor());
-                //listener.cellUpdated(manLine, manColumn, fwd);
+                // lookout: if we put the box in the hole we loose it
+                if (fwd.getType() == HOLE && next.getActor() == BOX) {
+                    numBoxes--;
 
-                // we remove the box, and place the man
+                    // we loose if we can't end
+                    if (numBoxes < numObjectives)
+                        boxInHole = true;
+
+                    cellboard[fwdLine][fwdColumn] = new FloorCell(FLOOR);
+                    //listener.cellReplaced(manLine, manColumn, fwd);
+                }
+
+                fwd.updateCell(next.getActor());
+                //listener.cellReplaced(manLine, manColumn, fwd);
+
                 next.removeActor();
                 next.updateCell(man);
                 //listener.cellReplaced(newLine, newColumn, next);
 
-                // man exit the current cell, we clean the cell
                 current.removeActor();
-                //listener.cellReplaced(newLine, newColumn, current);
 
-                manLine = newLine;
-                manColumn = newColumn;
-                moves++;
-
-                // lookout: if we put the box in the hole we loose
-                if (fwd.getType() == HOLE && fwd.getActor() == BOX) {
-                    boxInHole = true;
-                }
+                // we really should check for good this happening
+                if (fwd.getType() == OBJECTIVE && fwd.getActor() == BOX)
+                    boxes--;
+            } else {
+                return false;
             }
         } else {
-            // let's head back because we can't move
-            return;
+            // let's head back because we really can't move
+            return false;
         }
 
-        paintGame();
-
-        // we really should check for good this happening
-
-        // and if something good ended and we go down the rabbit hole
+        // if something good ended and we go down the rabbit hole
         if (next.getType() == HOLE && next.getActor() == MAN) {
             manInHole = true;
         }
 
+        return true;
+    }
+
+
+    /**
+     * Do a full sweep to check for boxes in objectives
+     */
+    private void checkForBoxes() {
+        Cell c;
+        int bc = 0;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                c = cellboard[i][j];
+
+                if (c.getActor() == BOX)
+                    bc++;
+            }
+        }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                c = cellboard[i][j];
+
+                if (c.getType() == OBJECTIVE) {
+                    if (c.getActor() == BOX)
+                        bc--;
+                    else
+                        bc++;
+                }
+            }
+        }
+        boxes = bc;
     }
 
     /**
@@ -188,8 +279,8 @@ public class Level {
     private void paintGame() {
         System.out.println();
         System.out.println();
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 if (cellboard[i][j].getActor() != null) {
                     switch (cellboard[i][j].getActor()) {
                         case MAN:
@@ -230,7 +321,7 @@ public class Level {
     public void reset() {
         moves = 0;
         boxes = 0;
-        cellboard = new Cell[width][height];
+        cellboard = new Cell[height][width];
     }
 
     /**
@@ -242,15 +333,21 @@ public class Level {
      * @param type
      */
     public void put(int line, int column, char type) {
-        // fix the position of man
+        // lock man position
         if (type == '@') {
             manLine = line;
             manColumn = column;
         }
 
         // count the number of boxes in the level
-        if (type == 'B')
+        if (type == 'B') {
             boxes++;
+            numBoxes++;
+        }
+
+        // count the objectives to account for lost boxes
+        if (type == '*')
+            numObjectives++;
 
         Actor actor = createActor(type);
 

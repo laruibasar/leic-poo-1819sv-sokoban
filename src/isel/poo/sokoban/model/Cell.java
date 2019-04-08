@@ -64,7 +64,7 @@ public class Cell {
      * If allows someone to enter the cell
      */
     public boolean canEnter() {
-        return this.secondary == null;
+        return (this.secondary == null);
     }
 
     /**
