@@ -139,7 +139,6 @@ public class Level {
     public void moveMan(Dir dir) {
         int newLine = manLine;
         int newColumn = manColumn;
-        Cell current = cellboard[manLine][manColumn];
 
         switch (dir) {
             case UP:
@@ -257,8 +256,6 @@ public class Level {
                 if (c.getType() == OBJECTIVE) {
                     if (c.getActor() == BOX)
                         bc--;
-                    else
-                        bc++;
                 }
             }
         }
