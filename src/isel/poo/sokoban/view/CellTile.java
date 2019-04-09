@@ -19,7 +19,7 @@ public class CellTile extends Tile {
 
     public static Tile tileOf(Cell cell) {
 
-        switch (cell.getActor){
+        switch (cell.getActor()){
             case '@': return new ManTile();
             break;
             case '@': return new BoxTile();
