@@ -2,19 +2,17 @@ package isel.poo.sokoban.view;
 
 import isel.leic.pg.Console;
 
+public class HoleTile extends CellTile{
 
-public class BoxTile extends CellTile {
-
-        public BoxTile(){
+    public HoleTile(){
         setSize(CellTile.SIDE, CellTile.SIDE);
     }
 
     @Override
     public void paint(){
-        Console.setBackground(Console.RED);
+        Console.setBackground(Console.CYAN);
         Console.setForeground(Console.BLACK);
-        print(0,0,'O'); print(0,1,'O');
-        print(1,0,'O'); print(1,1,'O');
+        print(0,0,'~'); print(0,1,'~');
+        print(1,0,'~'); print(1,1,'~');
     }
-
 }
