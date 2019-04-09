@@ -3,14 +3,11 @@ package isel.poo.sokoban.view;
 import isel.leic.pg.Console;
 import static isel.leic.pg.Console.*;
 
+import isel.poo.console.View;
 import isel.poo.console.FieldView;
 import isel.poo.console.ParentView;
 
 public class StatusPanel extends ParentView {
-
-    private int boxes;
-    private int moves;
-    private int level;
 
     private FieldView fvLevel;
     private FieldView fvMoves;
@@ -22,48 +19,47 @@ public class StatusPanel extends ParentView {
     public StatusPanel(int left) {
         super(0, left, HEIGHT, WIDTH, DARK_GRAY);
 
-        this.level = 0;
-        fvLevel = new FieldView("Level", 1, 1, Integer.toString(this.level));
+        fvLevel = new FieldView("Level", 1, 1, "0");
         addView(fvLevel);
 
-        fvMoves = new FieldView("Moves", 4, 1, Integer.toString(this.moves));
+        fvMoves = new FieldView("Moves", 4, 1, "0");
         addView(fvMoves);
-        this.moves = 0;
 
-        fvBoxes = new FieldView("Boxes", 7, 1, Integer.toString(this.boxes));
+        fvBoxes = new FieldView("Boxes", 7, 1, "0");
         addView(fvBoxes);
-        this.boxes = 0;
 
-        writeTitle(10, "Cursor");
-        writeContent(11,"move");
-        writeTitle(12,"Esc");
-        writeContent(13,"finish");
-        writeTitle(14,"S");
-        writeContent(15,"start");
-        cursor(0,0);
+
+        HelpView c = new HelpView();
+        addView(c);
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
 
-    public void setBoxes(int boxes) {
-        this.boxes = boxes;
-    }
+    public void setLevel(int level) { fvLevel.setValue(level); }
 
-    public void setMoves(int moves) {
-        this.moves = moves;
-    }
+    public void setBoxes(int boxes) { fvBoxes.setValue(boxes); }
 
-    private void writeTitle(int top, String s) {
-        cursor(top, 0);
-        setForeground(YELLOW);
-        Console.print(s);
-    }
+    public void setMoves(int moves) { fvMoves.setValue(moves); }
 
-    private void writeContent(int top, String s) {
-        cursor(top, 1);
-        setForeground(WHITE);
-        Console.print(s);
+    private static class HelpView extends View {
+        private HelpView() {
+            super(0,0, HEIGHT, WIDTH, DARK_GRAY);
+            repaint();
+        }
+
+        @Override public void paint() {
+            setBackground(DARK_GRAY);
+            setForeground(YELLOW);
+            print(10,0,"Cursor");
+            setForeground(WHITE);
+            print(11,1,"move");
+            setForeground(YELLOW);
+            print(12,0,"Esc");
+            setForeground(WHITE);
+            print(13,1,"finish");
+            setForeground(YELLOW);
+            print(14,0,"S");
+            setForeground(WHITE);
+            print(15,1,"start");
+        }
     }
 }

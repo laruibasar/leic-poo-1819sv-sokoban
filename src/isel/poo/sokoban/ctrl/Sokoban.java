@@ -83,7 +83,8 @@ public class Sokoban {
         status.setMoves(level.getMoves());
         status.repaint();
         int height = level.getHeight(), width = level.getWidth();
-        for (int l = 0; l < height; l++)                                // Create each tile for each cell
+        for (int l = 0; l < height; l++)                                //
+            // Create each tile for each cell
             for (int c = 0; c < width; c++)
                 view.setTile(l,c, CellTile.tileOf( level.getCell(l,c) ));
     }
