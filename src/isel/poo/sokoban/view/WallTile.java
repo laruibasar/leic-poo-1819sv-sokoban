@@ -4,7 +4,8 @@ import isel.leic.pg.Console;
 
 public class WallTile extends CellTile{
     public WallTile(){
-        setSize(CellTile.SIDE, CellTile.SIDE);
+
+        super();
     }
 
     @Override

@@ -5,7 +5,8 @@ import isel.leic.pg.Console;
 public class ObjectiveBoxTile extends CellTile{
 
     public ObjectiveBoxTile(){
-        setSize(CellTile.SIDE, CellTile.SIDE);
+
+        super();
     }
 
     @Override

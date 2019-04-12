@@ -1,12 +1,12 @@
 package isel.poo.sokoban.view;
 
 import isel.leic.pg.Console;
-
+import static isel.poo.sokoban.model.Actor.*;
 
 public class BoxTile extends CellTile {
 
-        public BoxTile(){
-        setSize(CellTile.SIDE, CellTile.SIDE);
+    public BoxTile(){
+        super();
     }
 
     @Override

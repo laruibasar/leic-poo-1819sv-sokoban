@@ -4,39 +4,54 @@ import isel.poo.console.tile.Tile;
 import isel.poo.sokoban.model.Actor;
 import isel.poo.sokoban.model.Cell;
 
+import static isel.poo.sokoban.model.Actor.OBJECTIVE;
+
 public class CellTile extends Tile {
 
     public static final int SIDE = 2;
 
     private int background, foreground;
-    private Actor type;
 
-    public CellTile(Cell cell) {
-        this.type = cell.getType();
+    public CellTile() {
+
+        setSize(CellTile.SIDE, CellTile.SIDE);
     }
 
     public static Tile tileOf(Cell cell) {
 
-        switch (cell.getActor()){
-            case '@': return new ManTile();
-            break;
-            case '@': return new BoxTile();
-            break;
-            case '@': return new EmptyTile();
-            break;
-            case '@': return new FloorTile();
-            break;
-            case '@': return new HoleTile();
-            break;
-            case '@': return new ObjectiveTile();
-            break;
-            case '@': return new ObjectiveBoxTile();
-            break;
-            case '@': return new WallTile();
-            break;
-        }
+        Actor second = cell.getActor();
+        Actor first = cell.getType();
 
-        return new BoxTile(cell); }
+        if(second==null) {
+            switch (first) {
+                case EMPTY:
+                    return new EmptyTile();
+                case FLOOR:
+                    return new FloorTile();
+                case HOLE:
+                    return new HoleTile();
+                case OBJECTIVE:
+                    return new ObjectiveTile();
+                case WALL:
+                    return new WallTile();
+                default:
+                    return new HoleTile();
+            }
+        }else{
+            switch (second) {
+                case MAN:
+                    return new ManTile();
+                case BOX:{
+                    if(first==OBJECTIVE)
+                        return new ObjectiveBoxTile();
+                    else
+                        return new BoxTile();
+                }
+                default:
+                    return new WallTile();
+            }
+        }
+    }
 
     @Override
     public void paint() { }

@@ -5,7 +5,8 @@ import isel.leic.pg.Console;
 public class HoleTile extends CellTile{
 
     public HoleTile(){
-        setSize(CellTile.SIDE, CellTile.SIDE);
+
+        super();
     }
 
     @Override

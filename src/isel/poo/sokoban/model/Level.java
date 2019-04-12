@@ -160,7 +160,7 @@ public class Level {
             Cell fwd = cellboard[fwdLine][fwdColumn];
 
             if (fwd.canEnter()) {
-                // lookout: if we put the box in the hole we loose it
+                // lookout: if we put the box in the hole we lose it
                 if (fwd.getType() == HOLE && next.getActor() == BOX) {
                     numBoxes--;
 
@@ -269,6 +269,11 @@ public class Level {
             }
             System.out.println();
         }
+        /*for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.println(cellboard[i][j]);
+            }
+        }*/
     }
 
     /**

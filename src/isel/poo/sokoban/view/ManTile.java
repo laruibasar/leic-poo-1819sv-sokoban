@@ -7,7 +7,8 @@ public class ManTile extends CellTile {
 
 
     public ManTile(){
-    setSize(CellTile.SIDE, CellTile.SIDE);
+
+        super();
     }
 
     @Override
