@@ -71,7 +71,6 @@ public class Sokoban {
         refreshView();
         do{
             play();
-            refreshView();
         }
 
             // Process keys and make a step
