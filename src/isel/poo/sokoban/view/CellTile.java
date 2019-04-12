@@ -16,7 +16,7 @@ public class CellTile extends Tile {
 
         setSize(CellTile.SIDE, CellTile.SIDE);
     }
-
+    //returns the correct tile based on type/actor of cell
     public static Tile tileOf(Cell cell) {
 
         Actor second = cell.getActor();
