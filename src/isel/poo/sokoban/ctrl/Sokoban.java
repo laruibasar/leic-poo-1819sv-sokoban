@@ -69,11 +69,8 @@ public class Sokoban {
         view.center(WIN_HEIGHT,WIN_WIDTH);                              // Center view in area
         level.setObserver(updater);                                     // Set listener of level
         refreshView();
-        do{
-            play();
-        }
-
-            // Process keys and make a step
+        do
+            play();                                                     // Process keys and make a step
         while ( !escaped && !level.isFinished() );
         if (escaped || level.manIsDead()) return false;
         win.message("You win");
