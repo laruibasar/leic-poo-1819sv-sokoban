@@ -1,22 +1,23 @@
 package isel.poo.sokoban.model.cell;
 
 import isel.poo.sokoban.model.Actor;
+import isel.poo.sokoban.model.CellType;
 import isel.poo.sokoban.model.Cell;
 
 public class EmptyCell extends Cell {
 
-    public EmptyCell(Actor a) {
-        super(a);
+    public EmptyCell(CellType t) {
+        super(t);
     }
 
     @Override
     public void updateCell(Actor a) {
-        this.secondary = a;
+        this.actor = a;
     }
 
     @Override
     public void removeActor() {
-        this.secondary = null;
+        this.actor = Actor.EMPTY;
     }
 
     @Override

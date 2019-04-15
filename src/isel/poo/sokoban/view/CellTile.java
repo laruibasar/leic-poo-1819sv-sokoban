@@ -2,9 +2,10 @@ package isel.poo.sokoban.view;
 
 import isel.poo.console.tile.Tile;
 import isel.poo.sokoban.model.Actor;
+import isel.poo.sokoban.model.CellType;
 import isel.poo.sokoban.model.Cell;
 
-import static isel.poo.sokoban.model.Actor.OBJECTIVE;
+import static isel.poo.sokoban.model.CellType.OBJECTIVE;
 
 public class CellTile extends Tile {
 
@@ -19,30 +20,29 @@ public class CellTile extends Tile {
     //returns the correct tile based on type/actor of cell
     public static Tile tileOf(Cell cell) {
 
-        Actor second = cell.getActor();
-        Actor first = cell.getType();
+        CellType cellType = cell.getType();
+        Actor actor = cell.getActor();
 
-        if(second==null) {
-            switch (first) {
+        if (actor == Actor.EMPTY) {
+            switch (cellType) {
                 case EMPTY:
                     return new EmptyTile();
                 case FLOOR:
                     return new FloorTile();
-                case HOLE:
-                    return new HoleTile();
                 case OBJECTIVE:
                     return new ObjectiveTile();
                 case WALL:
                     return new WallTile();
+                case HOLE:
                 default:
                     return new HoleTile();
             }
-        }else{
-            switch (second) {
+        } else {
+            switch (actor) {
                 case MAN:
                     return new ManTile();
                 case BOX:{
-                    if(first==OBJECTIVE)
+                    if(cellType == OBJECTIVE)
                         return new ObjectiveBoxTile();
                     else
                         return new BoxTile();

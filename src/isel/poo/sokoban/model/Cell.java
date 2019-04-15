@@ -10,42 +10,43 @@ package isel.poo.sokoban.model;
 public class Cell {
 
     /**
-     * Define the base type of actor the cell host
+     * Define the base type of cell host
      */
-    protected Actor main;
+    protected CellType type;
 
     /**
-     * There are cells types that should allow to host to actors.
+     * There are cells types that should allow to host actors.
      * E.g. the floor cells should allow to have the Man or the Box to go
      * through them.
      */
-    protected Actor secondary;
+    protected Actor actor;
 
     public Cell() { }
 
     /**
      * Public constructor
-     * @param a represent the main actor to be host on the cell.
+     * @param t represent the type of cell.
      */
-    public Cell(Actor a) {
-        this.main = a;
+    public Cell(CellType t) {
+        this.type = t;
+        this.actor = Actor.EMPTY;
     }
 
     /**
      * Method to identified the type of cell in game. The type is relative to
      * the main actor of the cell
-     * @return the actor of the cell
+     * @return the type of the cell
      */
-    public Actor getType() {
-        return this.main;
+    public CellType getType() {
+        return this.type;
     }
 
     /**
-     * We need a more talkative class, so this method is more subtle than the
-     * getType, here we return the actor using the cell
+     * We need a more talkative class, so this method
+     * return the actor using the cell
      */
     public Actor getActor() {
-        return this.secondary;
+        return this.actor;
     }
 
     /**
@@ -64,7 +65,7 @@ public class Cell {
      * If allows someone to enter the cell
      */
     public boolean canEnter() {
-        return (this.secondary == null);
+        return (this.actor == Actor.EMPTY);
     }
 
     /**

@@ -1,12 +1,13 @@
 package isel.poo.sokoban.model.cell;
 
 import isel.poo.sokoban.model.Actor;
+import isel.poo.sokoban.model.CellType;
 import isel.poo.sokoban.model.Cell;
 
 public class WallCell extends Cell {
 
-    public WallCell(Actor a) {
-        super(a);
+    public WallCell(CellType t) {
+        super(t);
     }
 
     @Override

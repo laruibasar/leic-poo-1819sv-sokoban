@@ -3,6 +3,7 @@ package isel.poo.sokoban.model;
 import isel.poo.sokoban.model.cell.*;
 
 import static isel.poo.sokoban.model.Actor.*;
+import static isel.poo.sokoban.model.CellType.*;
 
 public class Level {
 
@@ -181,10 +182,6 @@ public class Level {
 
                 current.removeActor();
                 listener.cellReplaced(manLine, manColumn, current);
-
-                // we really should check for good this happening
-                //if (fwd.getType() == OBJECTIVE && fwd.getActor() == BOX)
-                //    remainingBoxes--;
             } else {
                 return false;
             }
@@ -239,7 +236,7 @@ public class Level {
         System.out.println();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (cellboard[i][j].getActor() != null) {
+                if (cellboard[i][j].getActor() != Actor.EMPTY) {
                     switch (cellboard[i][j].getActor()) {
                         case MAN:
                             System.out.print("@ ");
@@ -270,11 +267,7 @@ public class Level {
             }
             System.out.println();
         }
-        /*for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.println(cellboard[i][j]);
-            }
-        }*/
+
     }
 
     /**
@@ -312,12 +305,11 @@ public class Level {
         if (type == '*')
             numObjectives++;
 
-        Actor actor = createActor(type);
-
         if (cellboard[line][column] == null) {
-            cellboard[line][column] = createCell(actor);
+            cellboard[line][column] = createCell(type);
         } else {
-            cellboard[line][column].updateCell(actor);
+            Actor a = createActor(type);
+            cellboard[line][column].updateCell(a);
             updateBoxes(cellboard[line][column]);
         }
 
@@ -349,42 +341,36 @@ public class Level {
             case 'B':
                 return BOX;
             case '.':
-                return EMPTY;
-            case ' ':
-                return FLOOR;
-            case 'X':
-                return WALL;
-            case '*':
-                return OBJECTIVE;
-            case 'H':
-                return HOLE;
             default:
-                return null;
+                return Actor.EMPTY;
         }
     }
 
     /**
      * Create the cell depending of the type of actor.
-     * @param a the actor to set the cell type
+     * @param ch the char read from file
      * @return the cell type
      */
-    private Cell createCell(Actor a) {
-        switch (a) {
-            case MAN:
-            case BOX:
-                Cell c = new FloorCell(FLOOR);
-                c.updateCell(a);
+    private Cell createCell(char ch) {
+        Cell c = new FloorCell(FLOOR);
+
+        switch (ch) {
+            case '@':
+                c.updateCell(man);
                 return c;
-            case EMPTY:
-                return new EmptyCell(a);
-            case FLOOR:
-                return new FloorCell(a);
-            case WALL:
-                return new WallCell(a);
-            case OBJECTIVE:
-                return new ObjectiveCell(a);
-            case HOLE:
-                return new HoleCell(a);
+            case 'B':
+                c.updateCell(Actor.BOX);
+                return c;
+            case '.':
+                return new EmptyCell(CellType.EMPTY);
+            case ' ':
+                return c;
+            case 'X':
+                return new WallCell(WALL);
+            case '*':
+                return new ObjectiveCell(OBJECTIVE);
+            case 'H':
+                return new HoleCell(HOLE);
             default:
                 return null;
         }
