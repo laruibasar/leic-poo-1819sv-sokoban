@@ -150,17 +150,17 @@ public class Level {
 
         if (next.canEnter()) {
             next.updateCell(man);
-            //listener.cellReplaced(manLine, manColumn, next);
+            listener.cellReplaced(newLine, newColumn, next);
 
             current.removeActor();
-            //listener.cellReplaced(newLine, newColumn, current);
+            listener.cellReplaced(manLine, manColumn, current);
         } else if (next.getActor() == BOX) {
             int fwdLine = newLine + (newLine - manLine);
             int fwdColumn = newColumn + (newColumn - manColumn);
             Cell fwd = cellboard[fwdLine][fwdColumn];
 
             if (fwd.canEnter()) {
-                // lookout: if we put the box in the hole we loose it
+                // lookout: if we put the box in the hole we lose it
                 if (fwd.getType() == HOLE && next.getActor() == BOX) {
                     numBoxes--;
 
@@ -169,17 +169,18 @@ public class Level {
                         boxInHole = true;
 
                     cellboard[fwdLine][fwdColumn] = new FloorCell(FLOOR);
-                    //listener.cellReplaced(manLine, manColumn, fwd);
+                    listener.cellReplaced(fwdLine, fwdColumn, fwd);
                 }
 
                 fwd.updateCell(next.getActor());
-                //listener.cellReplaced(manLine, manColumn, fwd);
+                listener.cellReplaced(fwdLine, fwdColumn, fwd);
 
                 next.removeActor();
                 next.updateCell(man);
-                //listener.cellReplaced(newLine, newColumn, next);
+                listener.cellReplaced(newLine, newColumn, next);
 
                 current.removeActor();
+                listener.cellReplaced(manLine, manColumn, current);
 
                 // we really should check for good this happening
                 //if (fwd.getType() == OBJECTIVE && fwd.getActor() == BOX)
@@ -269,6 +270,11 @@ public class Level {
             }
             System.out.println();
         }
+        /*for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.println(cellboard[i][j]);
+            }
+        }*/
     }
 
     /**
