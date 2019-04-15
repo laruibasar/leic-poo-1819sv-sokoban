@@ -145,7 +145,7 @@ public class Level {
      * @param newColumn the new column in the board to move into
      * @return success of the move
      */
-    public boolean moveManInCell(int newLine, int newColumn) {
+    private boolean moveManInCell(int newLine, int newColumn) {
         Cell current = cellboard[manLine][manColumn];
         Cell next = cellboard[newLine][newColumn];
 
